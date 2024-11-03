@@ -1,0 +1,19 @@
+// TRACING
+1. Install otel libraries
+2. Use otelgin library and middleware to inject tracing to every request context with tracer key "otel-go-contrib-tracer"
+3. You can get span by using built in func SpanFromContext from otel library in no. 1
+4. For external calls ensure to inject tracing context to http headers (look for propagator module in otel library) // propagation.NewCompositeTextMapPropagator(propagation.TraceContext{})
+5. In the external service, if also using gin with otelgin middleware it will automatically extract propagated trace context if exists in http headers
+
+Exporter
+An exporter is responsible for sending telemetry data to one or more backends or a collector.
+
+Collector
+OTEL Collector acts like a middleware that can receive, process and export telemetry data to backends/collector such as jaeger collector
+
+Tracer / Tracer Provider
+Once the exporter is created, a tracer provider is instantiated. This provider is crucial as it manages the creation of tracers, which are used to generate the telemetry data i.e create the spans
+
+Propagator
+In order for distributed tracing to work, the trace must be propagated (inject trace context to http headers) when calling other service
+as well as extracted in the receiving service and propagated again to another external service
