@@ -23,7 +23,11 @@ func main() {
 
 	//database := db.InitDB(cfg)
 
-	tracer := initTracer(cfg)
+	var tracer *trace.Tracer
+
+	if cfg.GetFlags().EnableTracer {
+		tracer = initTracer(cfg)
+	}
 
 	server := core.NewServer(cfg, tracer)
 

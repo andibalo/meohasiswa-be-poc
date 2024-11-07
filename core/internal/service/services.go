@@ -8,3 +8,6 @@ import (
 type UserService interface {
 	TestCallNotifService(ctx context.Context, req request.TestCallNotifServiceReq) error
 }
+
+type AuthService interface {
+}

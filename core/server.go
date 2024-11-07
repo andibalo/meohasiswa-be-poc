@@ -25,9 +25,11 @@ func NewServer(cfg config.Config, tracer *trace.Tracer) *Server {
 
 	//router.Use(middleware.RequestLogger())
 
-	tracer.SetGinMiddleware(router, cfg.AppName())
+	if cfg.GetFlags().EnableTracer {
+		tracer.SetGinMiddleware(router, cfg.AppName())
 
-	router.Use(trace.TracerLogger())
+		router.Use(trace.TracerLogger())
+	}
 
 	router.Use(gin.Recovery())
 
@@ -35,11 +37,13 @@ func NewServer(cfg config.Config, tracer *trace.Tracer) *Server {
 
 	notifSvc := notifsvc.NewNotificationService(cfg, hc)
 
+	authSvc := service.NewAuthService(cfg)
 	userSvc := service.NewUserService(cfg, notifSvc)
 
 	uc := v1.NewUserController(cfg, userSvc)
+	ac := v1.NewAuthController(cfg, authSvc)
 
-	registerHandlers(router, &api.HealthCheck{}, uc)
+	registerHandlers(router, &api.HealthCheck{}, uc, ac)
 
 	return &Server{
 		gin: router,

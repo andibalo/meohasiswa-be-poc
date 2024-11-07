@@ -29,6 +29,8 @@ type Config interface {
 	HttpExternalServiceTimeout() int64
 
 	GetNotifSvcCfg() NotifSvc
+
+	GetFlags() Flag
 }
 
 type AppConfig struct {
@@ -38,6 +40,7 @@ type AppConfig struct {
 	Tracer   tracer
 	Http     http
 	NotifSvc NotifSvc
+	Flag     Flag
 }
 
 type app struct {
@@ -74,6 +77,10 @@ type NotifSvc struct {
 
 type http struct {
 	ServiceExternalTimeout int64
+}
+
+type Flag struct {
+	EnableTracer bool
 }
 
 func InitConfig() *AppConfig {
@@ -116,6 +123,9 @@ func InitConfig() *AppConfig {
 		NotifSvc: NotifSvc{
 			URL:   viper.GetString("NOTIF_SVC_URL"),
 			Token: viper.GetString("NOTIF_SVC_TOKEN"),
+		},
+		Flag: Flag{
+			EnableTracer: viper.GetBool("ENABLE_TRACER"),
 		},
 	}
 }
@@ -172,4 +182,8 @@ func (c *AppConfig) HttpExternalServiceTimeout() int64 {
 
 func (c *AppConfig) GetNotifSvcCfg() NotifSvc {
 	return c.NotifSvc
+}
+
+func (c *AppConfig) GetFlags() Flag {
+	return c.Flag
 }
